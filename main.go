@@ -5,4 +5,5 @@ func main() {
 	println(soal2(uint(cetakInt("masukan input berupa angka positif"))))
 	println(soal3(uint(cetakInt("masukan sisi 1")), uint(cetakInt("masukan sisi 2")), uint(cetakInt("masuakn sisi 3"))))
 	println(soal4(cetakInt("masukan nilai")))
+	println(soal5(cetakInt("Masukan angka"), cetakInt("Masukan angka"), cetakInt("Masukan angka")))
 }
