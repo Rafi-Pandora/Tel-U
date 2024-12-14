@@ -14,6 +14,17 @@ func InputInt(pesan string) int {
 	return i
 }
 
+func InputFloat(pesan string) float64 {
+	var i float64
+	println(pesan)
+	_, err := fmt.Scanln(&i)
+	if err != nil {
+		println(err)
+		return 0
+	}
+	return i
+}
+
 func InputStr(pesan string) string {
 	var i string
 	println(pesan)
