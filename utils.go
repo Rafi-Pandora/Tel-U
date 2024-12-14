@@ -6,20 +6,32 @@ import "fmt"
 func InputInt(pesan string) int {
 	var i int
 	println(pesan)
-	fmt.Scanln(&i)
+	_, err := fmt.Scanln(&i)
+	if err != nil {
+		println(err)
+		return 0
+	}
 	return i
 }
 
 func InputStr(pesan string) string {
 	var i string
 	println(pesan)
-	fmt.Scanln(&i)
+	_, err := fmt.Scanln(&i)
+	if err != nil {
+		println(err)
+		return ""
+	}
 	return i
 }
 
 func InputBool(pesan string) bool {
 	var i bool
 	println(pesan)
-	fmt.Scanln(&i)
+	_, err := fmt.Scanln(&i)
+	if err != nil {
+		println(err)
+		return false
+	}
 	return i
 }
