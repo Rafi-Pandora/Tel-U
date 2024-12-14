@@ -5,5 +5,5 @@ func main() {
 	println(TigaBialangan(InputInt("\n\nTiga bilangan\nmasukan angka a :"), InputInt("masukan angka b :"), InputInt("masukan angka c :")))
 	println(ManagerEPL())
 	println(GajiPegawai(InputStr("\n\ngaji pegawai\nJabatan :"), uint(InputInt("Masa Kerja :")), uint(InputInt("Jumlah Anak :"))))
-	println(Ojol(InputInt("\n\nOjol\nMasukan jam:"), InputInt("Masukan menit:"), float64(InputInt("Masukan Jarak:"))))
+	println(Ojol(InputInt("\n\nOjol\nMasukan jam:"), InputInt("Masukan menit:"), InputFloat("Masukan Jarak:")))
 }
