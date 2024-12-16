@@ -1,6 +1,9 @@
 package main
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 func ManagerEPL() string {
 	println("\n")
@@ -9,7 +12,7 @@ func ManagerEPL() string {
 	var kalah uint = 0
 
 	for i := 0; i < len(matchArr); i++ {
-		matchArr[i] = InputStr("match ke :" + strconv.Itoa(i+1))
+		matchArr[i] = strings.ToLower(InputStr("match ke :" + strconv.Itoa(i+1)))
 
 		if matchArr[i] == "kalah" {
 			kalah++
