@@ -26,18 +26,38 @@ func buatCookie(w http.ResponseWriter, _ *http.Request, NamaCookie string, Nilai
 	http.SetCookie(w, cookie)
 }
 
-func cekCookie(_ http.ResponseWriter, r *http.Request, NamaCookie string, ValueArr *[]string) string {
+func cekCookie(_ http.ResponseWriter, r *http.Request) *[][]string {
+	//deklarasi array multidimensi untuk menyimpan return value fungsi dan boolean
+	var nilaiReturn = [][]string{}
 	var adaCookie bool
-	cekCookie, err := r.Cookie(NamaCookie)
-	if err != nil || !adaCookie {
-		return "cookie tidak ditemukan"
-	}
-	for i := 0; i < len(*ValueArr); i++ {
-		if cekCookie.Value == (*ValueArr)[i] {
-			adaCookie = true
+
+	//loop bedasarkan nama cookie
+	for i := 0; i < len(listNamaCookie); i++ {
+		cekCookie, err := r.Cookie(listNamaCookie[i])
+
+		//pengecekan cookie ada atau tidaknya
+		if err != nil {
+			nilaiReturn = append(nilaiReturn, []string{"", ""}) //jika tidak ada masukan nilai string kosong ke dimensi kedua array
+
+			//percabangan jika cookie tersebut ada
+		} else {
+			//loop elemen bedasarkan value cookie
+			for j := 0; j < len(listValueCookie[j]); j++ {
+				/*percabangan untuk mengecek apakah value dari cookie sama dengan array listValueCookie,
+				jika ada ubah nilai ada cookie ke true kemudian keluar dari looping*/
+				if cekCookie.Value == listValueCookie[j] {
+					adaCookie = true
+					break
+				}
+			}
+			if adaCookie {
+				nilaiReturn = append(nilaiReturn, []string{listNamaCookie[i], cekCookie.Value})
+			} else {
+				nilaiReturn = append(nilaiReturn, []string{listNamaCookie[i], ""})
+			}
 		}
 	}
-	return cekCookie.Value
+	return &nilaiReturn
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
@@ -86,11 +106,50 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
+func LogOut(w http.ResponseWriter, r *http.Request) {
+	cekCookie, err := r.Cookie("login")
+	if err != nil || cekCookie.Value == "false" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:     "login",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  time.Now().Add(-60 * time.Second),
+	}
+	http.SetCookie(w, cookie)
+	// fmt.Fprintln(w, "mencoba logout...")
+	time.Sleep(3 * time.Second)
+	http.Redirect(w, r, "/get", http.StatusTemporaryRedirect)
+}
+
 func GetCookie(w http.ResponseWriter, r *http.Request) {
 	// Mencoba mengambil cookie berdasarkan nama
 	namaCookie := r.URL.Query().Get("q")
 	if namaCookie == "" {
+		//memanggil fungsi cek cookie dan memasukan nilainya kedalam variabel list
+		listCookie := cekCookie(w, r)
 
+		//looping array pointer multidimensi untuk mencetak nilai
+		//looping dimensi pertama array
+		for i := 0; i < len(*listCookie); i++ {
+			//looping dimensi kedua array
+			for j := 0; j < len((*listCookie)[i]); j++ {
+				// Periksa apakah nilai cookie kosong
+				if (*listCookie)[i][j] == "" {
+					fmt.Fprintf(w, "Cookie tidak ditemukan!")
+					return // keluar dari fungsi
+				} else {
+					// Menampilkan nama dan nilai cookie yang ditemukan
+					fmt.Fprintf(w, "Cookie ditemukan! Nama: %s, Nilai: %s\n", (*listCookie)[i][0], (*listCookie)[i][1])
+					return
+				}
+			}
+		}
+		return //keluar dari fungsi
 	}
 
 	cookie, err := r.Cookie(namaCookie)
@@ -110,6 +169,11 @@ func HandlingDashboard(w http.ResponseWriter, _ *http.Request, arr *[]string, ar
 }
 
 func TambahMahasiswa(w http.ResponseWriter, r *http.Request, db *sql.DB) error {
+	cekCookie, err := r.Cookie("login")
+	if err != nil || cekCookie.Value == "false" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return nil
+	}
 	URIquery := r.URL.Query()
 	nama := URIquery.Get("nama")
 	nim := URIquery.Get("nim")

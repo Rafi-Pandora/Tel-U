@@ -28,6 +28,8 @@ func main() {
 		LoginHandler(w, r, db)
 	})
 
+	http.HandleFunc("/logout", LogOut)
+
 	http.HandleFunc("/del", func(w http.ResponseWriter, r *http.Request) {
 		HapusMahasiswa(w, r, db)
 	})
