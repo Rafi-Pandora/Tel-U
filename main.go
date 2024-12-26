@@ -16,9 +16,6 @@ func main() {
 	}
 	defer db.Close()
 
-	//variabel unutk menyimpan array hasil dari fungsi
-	nama, nim := LihatSemuaUserDiDatabase(db)
-
 	//===============================================================================//
 
 	//endpoint handler
@@ -42,6 +39,8 @@ func main() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		//variabel unutk menyimpan array hasil dari fungsi
+		nama, nim := LihatSemuaUserDiDatabase(db)
 		HandlingDashboard(w, r, &nama, &nim)
 	})
 

@@ -85,7 +85,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			fmt.Fprintln(w, "nama atau nim salah\nsisa percobaan : ", strconv.Itoa(3-int(percobaan)))
 		} else if percobaan < 3 {
 			buatCookie(w, r, "login", "true")
-
+			//reset kembali nilai percobaan
 			percobaan = 0
 			log.Println("user berhasil masuk")
 			// fmt.Fprintln(w, "selamat datang "+data)
@@ -189,8 +189,8 @@ func TambahMahasiswa(w http.ResponseWriter, r *http.Request, db *sql.DB) error {
 	}
 
 	TambahUserDatabase(db, nama, uint(Nim))
-	fmt.Fprintln(w, nama+"dengan nim: "+nim+"berhasil dimasukan")
-	log.Println(nama + "dengan nim: " + nim + "berhasil dimasukan")
+	fmt.Fprintf(w, "nama : %s dengan nim : %s \nBerhasil dimasukan ke database", nama, nim)
+	log.Printf("nama : %s dengan nim : %s \nBerhasil dimasukan ke database", nama, nim)
 	return nil
 }
 
