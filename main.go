@@ -44,6 +44,14 @@ func main() {
 		HandlingDashboard(w, r, &nama, &nim)
 	})
 
+	http.HandleFunc("/redirect", func(w http.ResponseWriter, r *http.Request) {
+		RedirectStruct := &redirectStruct{
+			Address: "/",
+			Message: "kamu akan dialihkan",
+		}
+		redirectHandler(w, r, RedirectStruct)
+	})
+
 	println("server berjalan pada http://localhost" + port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }

@@ -11,9 +11,23 @@ import (
 	"time"
 )
 
+type redirectStruct struct {
+	Address string
+	Message string
+}
+
 var percobaan uint8 = 0
 var listValueCookie = &[3]string{"true", "false", ""}
 var listNamaCookie = &[2]string{"login", "blokir"}
+
+func redirectHandler(w http.ResponseWriter, r *http.Request, RedirectStruct *redirectStruct) {
+	//buat struct yang nilai struct tersebut mengacu ke pointer
+
+	//cetak nilia message dari struct kemudian tunggu 3 detik dan lempar ke halaman yang dituju
+	fmt.Fprintln(w, RedirectStruct.Message)
+	time.Sleep(3 * time.Second)
+	http.Redirect(w, r, RedirectStruct.Address, http.StatusFound)
+}
 
 func buatCookie(w http.ResponseWriter, _ *http.Request, NamaCookie string, NilaiCookie string) {
 	cookie := &http.Cookie{
