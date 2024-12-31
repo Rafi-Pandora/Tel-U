@@ -35,7 +35,7 @@ func buatCookie(w http.ResponseWriter, _ *http.Request, NamaCookie string, Nilai
 		Value:    NilaiCookie,
 		Path:     "/",
 		HttpOnly: true,
-		Expires:  time.Now().Add(60 * time.Second),
+		Expires:  time.Now().Add(5 * time.Minute),
 	}
 	http.SetCookie(w, cookie)
 }
@@ -97,7 +97,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			data = "nama atau nim salah"
 			percobaan++
 			fmt.Fprintln(w, "nama atau nim salah\nsisa percobaan : ", strconv.Itoa(3-int(percobaan)))
-		} else if percobaan < 3 {
+		} else if percobaan < 4 {
 			buatCookie(w, r, "login", "true")
 			//reset kembali nilai percobaan
 			percobaan = 0

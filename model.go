@@ -7,13 +7,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// fungsi ini digunakan untuk mendeklarasikan database
 func InsialisasiDatabase() (*sql.DB, error) {
 	const username string = "admin123"
 	const password string = "admin123"
 
+	//untuk menampung nilai dari username dan password ditambah dengan URI database
 	dns := username + ":" + password + "@tcp(localhost:3306)/mahasiswa?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := sql.Open("mysql", dns)
 
+	// nill = null
 	if err != nil {
 		return nil, err
 	}
@@ -36,10 +39,12 @@ func LihatSemuaUserDiDatabase(db *sql.DB) ([]string, []string) {
 	}
 	defer rows.Close()
 
+	// Perulangan
 	for rows.Next() {
 		var name string
 		var nim string
 
+		// buat narik data dari database
 		if err := rows.Scan(&name, &nim); err != nil {
 			log.Fatal(err)
 		}

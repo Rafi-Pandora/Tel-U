@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"log"      //sama kayak println tapi ada tanggal dan waktunya
+	"net/http" //unutk memanggil kelas http dan semua fungsinya
 )
 
 func main() {
