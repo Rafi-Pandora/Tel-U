@@ -1,14 +1,20 @@
 package controller
 
 import (
-	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"server/models"
+	"server/utils"
+	"slices"
 	"strconv"
-	"time"
 )
+
+type ViewData struct {
+	Name  string
+	Films []*models.Film
+}
 
 func MainPageHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Film) {
 	name := r.URL.Query().Get("name")
@@ -20,11 +26,6 @@ func MainPageHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Fil
 		"add": func(a, b int) int { return a + b },
 	}
 
-	type ViewData struct {
-		Name  string
-		Films []*models.Film
-	}
-
 	viewData := ViewData{
 		Name:  name,
 		Films: *data,
@@ -32,12 +33,12 @@ func MainPageHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Fil
 
 	t, err := template.New("film.html").Funcs(funcMap).ParseFiles("./view/film.html")
 	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Template parsing error: %v", err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := t.Execute(w, viewData); err != nil {
-		http.Error(w, "Template execute error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Template execution error: %v", err), http.StatusInternalServerError)
 	}
 }
 
@@ -75,36 +76,135 @@ func AddFilm(w http.ResponseWriter, r *http.Request, data *[]*models.Film) {
 		*data = append(*data, &film)
 		log.Println("data ditambahkan", film)
 
-		time.Sleep(3 * time.Second)
 		http.Redirect(w, r, "/movie", http.StatusPermanentRedirect)
 	}
 }
 
-func ListFilm(w http.ResponseWriter, r *http.Request, data *[]*models.Film) {
-	// Cek apakah client minta JSON (misal: lewat query ?format=json)
-	format := r.URL.Query().Get("format")
+func ListFilmSort(w http.ResponseWriter, r *http.Request, data []*models.Film) {
+	sort := r.URL.Query().Get("sort")
+	name := r.URL.Query().Get("name")
 
-	if format == "json" {
-		if r.Method != http.MethodPost {
-			http.Error(w, "Harus Menggunakan POST", http.StatusMethodNotAllowed)
-			return
+	//
+	films := make([]*models.Film, 0, len(data))
+	for _, f := range data {
+		if f != nil {
+			films = append(films, f)
 		}
-		// Kirim response JSON saja
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(data)
-		return
+	}
+
+	switch sort {
+	case "rating_asc":
+		utils.InsertionSortByRating(films, true)
+	case "rating_desc":
+		utils.InsertionSortByRating(films, false)
+	case "title_asc":
+		utils.InsertionSortByJudul(films, true)
+	case "title_desc":
+		utils.InsertionSortByJudul(films, false)
+	default:
+		http.Error(w, "Request Param Failed", http.StatusBadRequest)
 	}
 
 	funcMap := template.FuncMap{
 		"add": func(a, b int) int { return a + b },
 	}
 
-	t, err := template.New("userlist").Funcs(funcMap).ParseFiles("./view/film.html")
+	viewData := ViewData{
+		Name:  name,
+		Films: films,
+	}
+
+	tmpl, err := template.New("film.html").Funcs(funcMap).ParseFiles("./view/film.html")
 	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Template parsing error: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	t.Execute(w, data)
+	if err := tmpl.Execute(w, viewData); err != nil {
+		http.Error(w, fmt.Sprintf("Template execution error: %v", err), http.StatusInternalServerError)
+	}
+}
+
+func SearchFilmHandler(w http.ResponseWriter, r *http.Request, data []*models.Film) {
+	genreParam := r.URL.Query().Get("genre")
+	judulParam := r.URL.Query().Get("judul")
+
+	// Copy []*Film ke []Film (tanpa pointer)
+	films := make([]*models.Film, 0, len(data))
+	for _, f := range data {
+		if f != nil {
+			films = append(films, f)
+		}
+	}
+
+	var found *models.Film
+
+	// pencarian berdasarkan genre
+	if genreParam != "" {
+		utils.InsertionSortByGenre(films, true)
+		if _, result := utils.BinarySearchByGenre(films, genreParam); result != nil {
+			found = result
+		}
+	}
+
+	// pencarian berdasarkan judul
+	if judulParam != "" {
+		utils.InsertionSortByJudul(films, true)
+		if _, result := utils.BinarySearchByJudul(films, judulParam); result != nil {
+			found = result
+		}
+	}
+
+	viewData := ViewData{
+		Name:  "Hasil Pencarian",
+		Films: []*models.Film{},
+	}
+	if found != nil {
+		viewData.Films = append(viewData.Films, found)
+	}
+
+	funcMap := template.FuncMap{
+		"add": func(a, b int) int { return a + b },
+	}
+
+	tmpl, err := template.New("film.html").Funcs(funcMap).ParseFiles("./view/film.html")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Template parsing error: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.Execute(w, viewData); err != nil {
+		http.Error(w, fmt.Sprintf("Template execution error: %v", err), http.StatusInternalServerError)
+	}
+	log.Println(found)
+}
+
+func DeleteFilmHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Film) {
+	judul := r.URL.Query().Get("judul")
+	if judul == "" {
+		http.Error(w, "Param Parsing Failed", http.StatusBadRequest)
+		return
+	}
+
+	utils.InsertionSortByJudul(*data, true)
+	_, result := utils.BinarySearchByJudul(*data, judul)
+	if result == nil {
+		http.Error(w, "Film tidak ditemukan", http.StatusNotFound)
+		return
+	}
+
+	idx := -1
+	for i, f := range *data {
+		if f == result {
+			idx = i
+			break
+		}
+	}
+
+	if idx != -1 {
+		*data = slices.Delete((*data), idx, idx+1)
+		log.Println(data, "berhasil dihapus")
+	}
+
+	http.Redirect(w, r, "/movie", http.StatusSeeOther)
 }

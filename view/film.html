@@ -8,6 +8,23 @@
 <div class="container mt-5">
     <h2 class="mb-4">Daftar Film, {{.Name}}</h2>
 
+    <!-- Dropdown Sort -->
+    <div class="mb-3 d-flex justify-content-between">
+        <a href="/movie/add" class="btn btn-success">Tambah Film</a>
+        <div class="dropdown">
+            <a href="/movie/advncsearch" class="btn btn-info">Advance Search</a>
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                Urutkan Berdasarkan
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/movie/list/sort?sort=rating_desc">Rating (Tertinggi ke Terendah)</a></li>
+                <li><a class="dropdown-item" href="/movie/list/sort?sort=rating_asc">Rating (Terendah ke Tertinggi)</a></li>
+                <li><a class="dropdown-item" href="/movie/list/sort?sort=title_asc">Judul (A ~ Z)</a></li>
+                <li><a class="dropdown-item" href="/movie/list/sort?sort=title_desc">Judul (Z ~ A)</a></li>
+            </ul>
+        </div>
+    </div>
+
     {{if .Films}}
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -36,7 +53,7 @@
                 </td>
                 <td>
                     <a href="/movie/edit/{{$film.Judul}}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="/movie/del/{{$film.Judul}}" class="btn btn-sm btn-danger"
+                    <a href="/movie/delete?judul={{$film.Judul}}" class="btn btn-sm btn-danger"
                        onclick="return confirm('Yakin ingin menghapus film ini?');">Hapus</a>
                 </td>
             </tr>
@@ -48,8 +65,8 @@
         Belum ada data film.
     </div>
     {{end}}
-
-    <a href="/movie/add" class="btn btn-success mt-3">Tambah Film</a>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -23,8 +23,20 @@ func main() {
 		controller.AddFilm(w, r, &listFilmArr)
 	})
 
-	http.HandleFunc("/movi/list", func(w http.ResponseWriter, r *http.Request) {
-		controller.ListFilm(w, r, &listFilmArr)
+	http.HandleFunc("/movie/list/sort", func(w http.ResponseWriter, r *http.Request) {
+		controller.ListFilmSort(w, r, listFilmArr)
+	})
+
+	http.HandleFunc("/movie/search/result", func(w http.ResponseWriter, r *http.Request) {
+		controller.SearchFilmHandler(w, r, listFilmArr)
+	})
+
+	http.HandleFunc("/movie/advncsearch", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./view/search.html")
+	})
+
+	http.HandleFunc("/movie/delete", func(w http.ResponseWriter, r *http.Request) {
+		controller.DeleteFilmHandler(w, r, &listFilmArr)
 	})
 
 	fmt.Println("Server jalan di http://localhost:" + port + "/movie")
