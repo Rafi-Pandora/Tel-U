@@ -3,8 +3,46 @@
 <head>
     <title>Daftar Film</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #f1f1f1;
+        }
+        .table {
+            background-color: #1e1e1e;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table-dark {
+            background-color: #2c2c2c;
+        }
+        .btn {
+            transition: 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .header, .footer {
+            background-color: #1f1f1f;
+            padding: 1rem;
+            text-align: center;
+            color: #ffffff;
+        }
+        .badge {
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
+
+<div class="header">
+    <h1>🎬 Daftar Film</h1>
+</div>
+
 <div class="container mt-5">
     <h2 class="mb-4">Daftar Film, {{.Name}}</h2>
 
@@ -12,7 +50,7 @@
     <div class="mb-3 d-flex justify-content-between">
         <a href="/movie/add" class="btn btn-success">Tambah Film</a>
         <div class="dropdown">
-            <a href="/movie/advncsearch" class="btn btn-info">Advance Search</a>
+            <a href="/movie/advncsearch" class="btn btn-info me-2">Advance Search</a>
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                 Urutkan Berdasarkan
             </button>
@@ -26,7 +64,7 @@
     </div>
 
     {{if .Films}}
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped text-light">
         <thead class="table-dark">
             <tr>
                 <th>No</th>
@@ -42,7 +80,36 @@
             <tr>
                 <td>{{add $i 1}}</td>
                 <td>{{$film.Judul}}</td>
-                <td>{{$film.Genre}}</td>
+                <td>
+                    {{if eq $film.Genre "Action"}}<i class="fas fa-bolt"></i>{{end}}
+                    {{if eq $film.Genre "Adventure"}}<i class="fas fa-hiking"></i>{{end}}
+                    {{if eq $film.Genre "Animation"}}<i class="fas fa-film"></i>{{end}}
+                    {{if eq $film.Genre "Biography"}}<i class="fas fa-user"></i>{{end}}
+                    {{if eq $film.Genre "Comedy"}}<i class="fas fa-laugh"></i>{{end}}
+                    {{if eq $film.Genre "Crime"}}<i class="fas fa-user-secret"></i>{{end}}
+                    {{if eq $film.Genre "Documentary"}}<i class="fas fa-book"></i>{{end}}
+                    {{if eq $film.Genre "Drama"}}<i class="fas fa-theater-masks"></i>{{end}}
+                    {{if eq $film.Genre "Family"}}<i class="fas fa-home"></i>{{end}}
+                    {{if eq $film.Genre "Fantasy"}}<i class="fas fa-hat-wizard"></i>{{end}}
+                    {{if eq $film.Genre "History"}}<i class="fas fa-landmark"></i>{{end}}
+                    {{if eq $film.Genre "Horror"}}<i class="fas fa-ghost"></i>{{end}}
+                    {{if eq $film.Genre "Music"}}<i class="fas fa-music"></i>{{end}}
+                    {{if eq $film.Genre "Musical"}}<i class="fas fa-headphones"></i>{{end}}
+                    {{if eq $film.Genre "Mystery"}}<i class="fas fa-user-ninja"></i>{{end}}
+                    {{if eq $film.Genre "Romance"}}<i class="fas fa-heart"></i>{{end}}
+                    {{if eq $film.Genre "Science Fiction / Sci-Fi"}}<i class="fas fa-rocket"></i>{{end}}
+                    {{if eq $film.Genre "Sport"}}<i class="fas fa-futbol"></i>{{end}}
+                    {{if eq $film.Genre "Superhero"}}<i class="fas fa-mask"></i>{{end}}
+                    {{if eq $film.Genre "Thriller"}}<i class="fas fa-skull-crossbones"></i>{{end}}
+                    {{if eq $film.Genre "War"}}<i class="fas fa-helmet-safety"></i>{{end}}
+                    {{if eq $film.Genre "Western"}}<i class="fas fa-hat-cowboy"></i>{{end}}
+                    {{if eq $film.Genre "Noir"}}<i class="fas fa-user-tie"></i>{{end}}
+                    {{if eq $film.Genre "Psychological"}}<i class="fas fa-brain"></i>{{end}}
+                    {{if eq $film.Genre "Surreal"}}<i class="fas fa-eye"></i>{{end}}
+                    {{if eq $film.Genre "Martial Arts"}}<i class="fas fa-hand-fist"></i>{{end}}
+                    {{if eq $film.Genre "Disaster"}}<i class="fas fa-fire"></i>{{end}}
+                    {{$film.Genre}}
+                </td>
                 <td>{{$film.Rating}}</td>
                 <td>
                     {{if $film.Status}}
@@ -52,9 +119,15 @@
                     {{end}}
                 </td>
                 <td>
-                    <a href="/movie/edit/{{$film.Judul}}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="/movie/delete?judul={{$film.Judul}}" class="btn btn-sm btn-danger"
-                       onclick="return confirm('Yakin ingin menghapus film ini?');">Hapus</a>
+                    <a href="/movie/edit?judul={{$film.Judul}}" class="btn btn-sm btn-primary" title="Edit">
+                        <i class="fas fa-pen-to-square"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-danger" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#deleteModal" 
+                            data-judul="{{$film.Judul}}" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
             {{end}}
@@ -67,6 +140,38 @@
     {{end}}
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-dark">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteModalLabel">Konfirmasi Hapus</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body">
+        Apakah kamu yakin ingin menghapus film <strong id="filmJudul"></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Hapus</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS & Modal Logic -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const judul = button.getAttribute('data-judul');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const filmJudul = document.getElementById('filmJudul');
+
+        filmJudul.textContent = judul;
+        confirmBtn.href = '/movie/delete?judul=' + encodeURIComponent(judul);
+    });
+</script>
 </body>
 </html>

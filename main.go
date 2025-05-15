@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"server/controller"
 	"server/models"
@@ -37,6 +38,25 @@ func main() {
 
 	http.HandleFunc("/movie/delete", func(w http.ResponseWriter, r *http.Request) {
 		controller.DeleteFilmHandler(w, r, &listFilmArr)
+	})
+
+	http.HandleFunc("/movie/edit", func(w http.ResponseWriter, r *http.Request) {
+		controller.EditFilmHandler(w, r, &listFilmArr)
+	})
+
+	http.HandleFunc("/movie/seed", func(w http.ResponseWriter, r *http.Request) {
+		// if r.Method != http.MethodPost {
+		// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		// 	return
+		// }
+
+		seedData := models.SeedFilms()
+		listFilmArr = listFilmArr[:0]
+		listFilmArr = append(listFilmArr, seedData...)
+
+		log.Printf("data diinjeksi, total: %d film\n", len(listFilmArr))
+
+		http.Redirect(w, r, "/movie", http.StatusSeeOther)
 	})
 
 	fmt.Println("Server jalan di http://localhost:" + port + "/movie")
