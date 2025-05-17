@@ -3,6 +3,7 @@ package utils
 import (
 	"server/models"
 	"strconv"
+	"strings"
 )
 
 func SequentialSearchByGenre(films []*models.Film, target string) []*models.Film {
@@ -35,12 +36,18 @@ func SequentialSearchByRating(films []*models.Film, target string) ([]*models.Fi
 }
 
 func BinarySearchByJudul(films []*models.Film, target string) (int, *models.Film) {
+	var lowerCaseJudul, lowerCaseTarget string
+
+	lowerCaseTarget = strings.ToLower(target)
 	low, high := 0, len(films)-1
+
 	for low <= high {
 		mid := (low + high) / 2
-		if films[mid].Judul == target {
+		lowerCaseJudul = strings.ToLower(films[mid].Judul)
+
+		if lowerCaseJudul == lowerCaseTarget {
 			return mid, films[mid]
-		} else if films[mid].Judul < target {
+		} else if lowerCaseJudul < lowerCaseTarget {
 			low = mid + 1
 		} else {
 			high = mid - 1

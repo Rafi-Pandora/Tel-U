@@ -128,7 +128,6 @@ func SearchFilmHandler(w http.ResponseWriter, r *http.Request, data []*models.Fi
 
 	if genreParam != "" {
 		if found = utils.SequentialSearchByGenre(films, genreParam); found != nil {
-			log.Println("Search result:", found)
 			textResult = "Hasil Pencarian genre " + genreParam
 		} else {
 			formLabel = "film dengan genre " + genreParam + " tidak ditemukan"
@@ -143,7 +142,6 @@ func SearchFilmHandler(w http.ResponseWriter, r *http.Request, data []*models.Fi
 		}
 
 		if found != nil {
-			log.Println("Search result:", found)
 			textResult = "Hasil Pencarian film dengan rating " + ratingParam
 		} else {
 			formLabel = "film dengan film dengan rating " + ratingParam + " tidak ditemukan"
@@ -168,6 +166,9 @@ func SearchFilmHandler(w http.ResponseWriter, r *http.Request, data []*models.Fi
 	}
 	if found != nil {
 		viewData.Films = found
+		for _, f := range found {
+			log.Printf("Search result: %+v\n", *f)
+		}
 	}
 
 	tmpl, err := utils.ParseTemplate("film.html", "./view/film.html")
@@ -267,7 +268,8 @@ func EditFilmHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Fil
 		(*data)[idx].Rating = float32(finalRating)
 		(*data)[idx].Status = newStatus
 
-		log.Println("Data berhasil diubah:", *data)
+		log.Printf("data dengan \njudul: %s\nGenre: %s\nRating: %.1f\nStatus: %t \nBerhasil diubah.\n", newJudul, newGenre, float32(finalRating), newStatus)
+
 		http.Redirect(w, r, "/movie/list", http.StatusSeeOther)
 
 	default:

@@ -59,13 +59,11 @@
 
 <div class="container mt-5">
     <h2 class="mb-4">Pencarian Film</h2>
-
     <form method="GET" action="/movie/search/result">
         <div class="mb-3">
             <label for="judul" class="form-label">Judul</label>
             <input type="text" class="form-control" id="judul" name="judul" placeholder="Contoh: Parasite">
         </div>
-
         <div class="mb-3">
             <label for="genre" class="form-label">Genre</label>
             <select class="form-select" id="genre" name="genre">
@@ -131,8 +129,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Kamu hanya boleh memilih salah satu dari 3 pencarian, hanya bisa memakai judul atau genre atau rating saja, tidak bisa lebih dari satu pilihan.
-        Judul yang dicari bersifat <span class="badge bg-danger">CAMEL CASE</span>, tolong perhatikan kembali huruf kapital pada Judul Film.
+        Kamu hanya boleh memilih <span class="badge bg-danger">SALAH SATU</span> dari 3 pencarian, kamu hanya bisa mencari judul atau genre atau rating saja, tidak bisa melebihi dari satu pilihan.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
