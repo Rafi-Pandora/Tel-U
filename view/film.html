@@ -38,9 +38,10 @@
     </style>
 </head>
 <body>
-
 <div class="header">
-    <h1>🎬 Daftar Film</h1>
+    <a href="/movie" style="text-decoration: none; color: inherit;">
+        <h1>🎬 Daftar Film</h1>
+    </a>
 </div>
 
 <div class="container mt-5">
@@ -135,7 +136,7 @@
     </table>
     {{else}}
     <div class="alert alert-warning" role="alert">
-        Belum ada data film.
+        {{.FormLabel}}
     </div>
     {{end}}
 </div>

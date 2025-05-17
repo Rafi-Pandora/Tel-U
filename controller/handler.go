@@ -16,8 +16,9 @@ func MainPageHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Fil
 	}
 
 	viewData := utils.ViewData{
-		Name:  name,
-		Films: *data,
+		Name:      name,
+		FormLabel: "Belum ada data film.",
+		Films:     *data,
 	}
 
 	t, err := utils.ParseTemplate("film.html", "./view/film.html")
@@ -117,28 +118,56 @@ func ListFilmSort(w http.ResponseWriter, r *http.Request, data []*models.Film) {
 func SearchFilmHandler(w http.ResponseWriter, r *http.Request, data []*models.Film) {
 	genreParam := r.URL.Query().Get("genre")
 	judulParam := r.URL.Query().Get("judul")
+	ratingParam := r.URL.Query().Get("rating")
 
 	films := utils.FilterNonNilFilms(data)
 
-	var found *models.Film
+	var found []*models.Film
+	var formLabel, textResult string
+	var err error
 
 	if genreParam != "" {
-		utils.InsertionSortByGenre(films, true)
-		if _, res := utils.BinarySearchByGenre(films, genreParam); res != nil {
-			found = res
+		if found = utils.SequentialSearchByGenre(films, genreParam); found != nil {
+			log.Println("Search result:", found)
+			textResult = "Hasil Pencarian genre " + genreParam
+		} else {
+			formLabel = "film dengan genre " + genreParam + " tidak ditemukan"
+		}
+	}
+
+	if ratingParam != "" {
+		found, err = utils.SequentialSearchByRating(films, ratingParam)
+
+		if err != nil {
+			http.Error(w, "parsing error", http.StatusInternalServerError)
+		}
+
+		if found != nil {
+			log.Println("Search result:", found)
+			textResult = "Hasil Pencarian film dengan rating " + ratingParam
+		} else {
+			formLabel = "film dengan film dengan rating " + ratingParam + " tidak ditemukan"
 		}
 	}
 
 	if judulParam != "" {
 		utils.InsertionSortByJudul(films, true)
-		if _, res := utils.BinarySearchByJudul(films, judulParam); res != nil {
-			found = res
+		if indexFilm, res := utils.BinarySearchByJudul(films, judulParam); res != nil {
+			found = append(found, res)
+			log.Println("Search result: ", res, ", urutan index: ", indexFilm)
+			textResult = "Hasil Pencarian judul " + judulParam
+		} else {
+			formLabel = "film dengan judul " + judulParam + " tidak ditemukan"
 		}
 	}
 
-	viewData := utils.ViewData{Name: "Hasil Pencarian", Films: []*models.Film{}}
+	viewData := utils.ViewData{
+		Name:      textResult,
+		FormLabel: formLabel,
+		Films:     []*models.Film{},
+	}
 	if found != nil {
-		viewData.Films = append(viewData.Films, found)
+		viewData.Films = found
 	}
 
 	tmpl, err := utils.ParseTemplate("film.html", "./view/film.html")
@@ -150,7 +179,6 @@ func SearchFilmHandler(w http.ResponseWriter, r *http.Request, data []*models.Fi
 	if err := tmpl.Execute(w, viewData); err != nil {
 		http.Error(w, fmt.Sprintf("Template execution error: %v", err), http.StatusInternalServerError)
 	}
-	log.Println("Search result:", found)
 }
 
 func DeleteFilmHandler(w http.ResponseWriter, r *http.Request, data *[]*models.Film) {

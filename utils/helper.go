@@ -8,8 +8,9 @@ import (
 
 // Untuk halaman list atau main
 type ViewData struct {
-	Name  string
-	Films []*models.Film
+	Name      string
+	FormLabel string
+	Films     []*models.Film
 }
 
 // Untuk form tambah/edit

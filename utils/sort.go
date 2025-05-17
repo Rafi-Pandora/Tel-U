@@ -45,22 +45,3 @@ func InsertionSortByJudul(films []*models.Film, ascending bool) {
 		films[j+1] = key
 	}
 }
-
-func InsertionSortByGenre(films []*models.Film, ascending bool) {
-	for i := 1; i < len(films); i++ {
-		key := films[i]
-		j := i - 1
-		if ascending {
-			for j >= 0 && films[j].Genre > key.Genre {
-				films[j+1] = films[j]
-				j--
-			}
-		} else {
-			for j >= 0 && films[j].Genre < key.Genre {
-				films[j+1] = films[j]
-				j--
-			}
-		}
-		films[j+1] = key
-	}
-}
