@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -21,6 +22,21 @@ protected:
     static void system_cpp_optimize() {
         ios::sync_with_stdio(false);
         cin.tie(nullptr);
+    }
+
+public:
+    /**
+     * @brief mengecek input dari user
+     *  - jika input tidak dalam rentang uint8_t(0-255) atau bukan angka maka return false
+     * @param input mengecek input uint8_t
+     * @return true jika aman dan false jika nilai diluar rentang atau input bukan angka
+     */
+    static bool input_check(uint8_t input) {
+        if (input < 0 || input > 255 || cin.fail()) {
+            cout << "input error" << endl;
+            return false;
+        }
+        return true;
     }
 };
 
@@ -173,5 +189,25 @@ public:
 };
 
 int main() {
+    soal_1 S1;
+    soal_2 S2; //deklarasi objek
+    soal_3 S3;
 
+    uint8_t angka; //deklarasi temp var angka dari rentang 0 - 255
+
+    printf("Penjumlahan: %f", S1.penjumlahan());
+    printf("Pengurangan: %f", S1.pengurangan());
+    printf("Perkalian: %f", S1.perkalian());
+    printf("Pembagian: %s", S1.pembagian());
+
+    printf("masukan angka range (0-100)");
+    
+    cin >> angka;
+    if (!system::input_check(angka)) return 0;
+    printf("hasil konversi: %s", S2.konversi(angka));
+
+    printf("input");
+    cin >> angka;
+    if (!system::input_check(angka)) return 0;
+    S3.pattern(angka);
 }
