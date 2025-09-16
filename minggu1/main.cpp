@@ -5,13 +5,13 @@
 using namespace std;
 
 /**
- * @class system
+ * @class my_system
  * @brief ini Kelas dasar yang sya gunakan untuk optimalisasi input/output C++ agar performanya menyamai C.
  *
  * Kelas ini punya fungsi static untuk mempercepat I/O
  * dengan cara mematikan sinkronisasi stdio dan melepas kaitan cin/cout.
  */
-class system {
+class my_system {
 protected:
     /**
      * @brief membantu optimisasi input/output C++.
@@ -31,7 +31,7 @@ public:
      * @param input mengecek input uint8_t
      * @return true jika aman dan false jika nilai diluar rentang atau input bukan angka
      */
-    static bool input_check(uint8_t input) {
+    static bool input_check(int input) {
         if (input < 0 || input > 255 || cin.fail()) {
             cout << "input error" << endl;
             return false;
@@ -46,7 +46,7 @@ public:
  *
  * fungsi ini adalah turunan dari class system agar otomatis menggunakan I/O yang lebih cepat.
  */
-class soal_1 : public system {
+class soal_1 : public my_system {
 private:
     float angka_1; //Menyimpan angka pertama
     float angka_2; //Menyimpan angka kedua
@@ -62,7 +62,7 @@ private:
 public:
     // Konstruktor (fungsi yang diapnggil saat objek di inisialisai): digunakan untuk mengaktifkan optimisasi dan langsung memanggil input
     soal_1() {
-        system::system_cpp_optimize();
+        my_system::system_cpp_optimize();
         input_io();
     }
 
@@ -103,7 +103,7 @@ public:
  * - 11 -> "sebelas"
  * - 42 -> "empat puluh dua"
  */
-class soal_2 : public system {
+class soal_2 : public my_system {
 private:
     //array string untuk menympan str angka 0–9
     string angka_satuan[10] = {
@@ -113,7 +113,7 @@ private:
 
 public:
     soal_2() {
-        system::system_cpp_optimize();
+        my_system::system_cpp_optimize();
     }
 
     /**
@@ -157,13 +157,13 @@ public:
  *       2 1 * 1 2
  *         1 * 1
  */
-class soal_3 : public system {
+class soal_3 : public my_system {
 private:
     uint8_t input; //Menyimpan input dari user
 
 public:
     soal_3() {
-        system::system_cpp_optimize();
+        my_system::system_cpp_optimize();
     }
 
     /**
@@ -193,21 +193,20 @@ int main() {
     soal_2 S2; //deklarasi objek
     soal_3 S3;
 
-    uint8_t angka; //deklarasi temp var angka dari rentang 0 - 255
+    int angka_int;
+    printf("Penjumlahan: %f\n", S1.penjumlahan());
+    printf("Pengurangan: %f\n", S1.pengurangan());
+    printf("Perkalian: %f\n", S1.perkalian());
+    printf("Pembagian: %f\n", S1.pembagian());
 
-    printf("Penjumlahan: %f", S1.penjumlahan());
-    printf("Pengurangan: %f", S1.pengurangan());
-    printf("Perkalian: %f", S1.perkalian());
-    printf("Pembagian: %s", S1.pembagian());
-
-    printf("masukan angka range (0-100)");
+    cout << "masukan angka range (0-100)" << endl;
     
-    cin >> angka;
-    if (!system::input_check(angka)) return 0;
-    printf("hasil konversi: %s", S2.konversi(angka));
+    cin >> angka_int;
+    if (!my_system::input_check(angka_int)) return 0;
+    cout << "hasil konversi: " << S2.konversi(angka_int) << endl;
 
-    printf("input");
-    cin >> angka;
-    if (!system::input_check(angka)) return 0;
-    S3.pattern(angka);
+    cout << "input" << endl;
+    cin >> angka_int;
+    if (!my_system::input_check(angka_int)) return 0;
+    S3.pattern(angka_int);
 }
