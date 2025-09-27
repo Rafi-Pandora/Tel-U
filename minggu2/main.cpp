@@ -64,8 +64,54 @@ class nilai_mahasiswa {
         temp += nilai[i];
       }
 
-      return temp;
+      return (temp / (int)mahasiswa);
     }
+};
+
+class Produk {
+  private:
+    static const uint8_t jumlah_produk = 5;
+    uint8_t produk[(int)jumlah_produk];
+  
+  public:
+    Produk() {
+      for (uint8_t i = 0; i < jumlah_produk; i++ ) {
+        cout << "masukan produk ke - " << i + 1 << endl;
+        cin >> produk[(int)i];
+      }
+    }
+
+  int total_penjualan() {
+    int temp;
+    for (uint8_t i = 0; i < jumlah_produk; i++ ) {
+      temp += (int)produk[i];
+    }
+    return temp;
+  }
+
+  void maksimum_penjualan() {
+    uint8_t temp = produk[0];
+    uint8_t j;
+    for (uint8_t i = 0; i < jumlah_produk; i++ ) {
+      if (temp < produk[i]) {
+        temp = produk[i];
+        j = i + 1;
+      }
+    }
+    cout << "penjualan tertinggi produk ke - " << j << "(" << temp << ")" << endl;
+  }
+
+  void minimum_penjualan() {
+    uint8_t temp = produk[0];
+    uint8_t j;
+    for (uint8_t i = 0; i < jumlah_produk; i++ ) {
+      if (temp > produk[i]) {
+        temp = produk[i];
+        j = i + 1;
+      }
+    }
+    cout << "penjualan terendah produk ke - " << j << "(" << temp << ")" << endl;
+  }
 };
 
 int main () {
