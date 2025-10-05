@@ -1,2 +1,6 @@
 *.png
 /pic
+/.vscode
+/cpp
+*.zip
+*/build
