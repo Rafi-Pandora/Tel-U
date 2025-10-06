@@ -42,6 +42,46 @@ public:
     }
 };
 
+class Nilai {
+private:
+  uint jumlah_mahasiswa;
+  float* nilai_mahasiswa;
+  float rata_rata;
+
+public:
+  Nilai(uint jumlah) {
+    jumlah_mahasiswa = jumlah;
+    nilai_mahasiswa = new float[jumlah_mahasiswa];
+    rata_rata = 0.0f;
+  }
+
+  ~Nilai() {
+    delete[] nilai_mahasiswa;
+  }
+
+  void input_nilai_mahasiswa() {
+    for (int i = 0; i < static_cast<int>(jumlah_mahasiswa); i++) {
+      cout << "masukan nilai mahasiswa ke - " << i + 1 << endl;
+      cin >> *(nilai_mahasiswa + i);
+    }
+  }
+
+  void hitung_rata_rata() {
+    float total = 0.0f;
+    float *ptr = nilai_mahasiswa;
+
+    for (int i = 0; i < static_cast<int>(jumlah_mahasiswa); i ++) {
+      total += *(ptr + i);
+    }
+
+    rata_rata = total / static_cast<float>(jumlah_mahasiswa);
+  }
+
+  void tampil_rata_rata() const {
+    cout << "rata rata nilai" << rata_rata << endl;
+  }
+};
+
 int main(int argc, char const *argv[])
 {
     Pelajaran pelajaran;
