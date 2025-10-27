@@ -27,6 +27,7 @@ void SinglyList::insertFirst(int value) {
     Node* newNode = new Node(value);
     newNode->next = first;
     first = newNode;
+    cout << value << " ";
 }
 
 /**
@@ -52,6 +53,47 @@ void SinglyList::printInfo() const {
  */
 bool SinglyList::isEmpty() const {
     return first == nullptr;
+}
+
+/**
+ * @brief Cari nilai tertentu di dalam list.
+ * 
+ * @param target nilai yang mau dicari.
+ * @return true kalau ketemu, false kalau enggak.
+ */
+bool SinglyList::findValue(int target) const {
+    Node* current = first;
+    while (current != nullptr) {
+        if (current->info == target) {
+            cout << "Nilai " << target << " ketemu di list!" << endl;
+            return true;
+        }
+        current = current->next;
+    }
+    cout << "Nilai " << target << " tidak ketemu di list." << endl;
+    return false;
+}
+
+/**
+ * @brief Hitung total dari semua nilai di list.
+ * @return jumlah seluruh nilai info di setiap node.
+ */
+int SinglyList::sumAll() const {
+    int total = 0;
+    Node* current = first;
+
+    if (current == nullptr) {
+        cout << "List kosong, total = 0" << endl;
+        return 0;
+    }
+
+    while (current != nullptr) {
+        total += current->info;
+        current = current->next;
+    }
+
+    cout << "Total semua nilai di list = " << total << endl;
+    return total;
 }
 
 /**

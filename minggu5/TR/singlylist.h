@@ -58,6 +58,10 @@ public:
      */
     bool isEmpty() const;
 
+    bool findValue(int target) const;
+
+    int sumAll() const;
+
 private:
     /**
      * @brief Hapus 1 node dari memori.
